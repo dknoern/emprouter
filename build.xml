@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="EMPRouter" basedir="." default="build">
+	<path id="compile.classpath">
+		<fileset dir="lib">
+			<include name="**/*.jar" />
+		</fileset>
+	</path>
+
+
+
+	<target name="clean">
+		<delete quiet="true" dir="bin" />
+	</target>
+
+
+	<target name="build" description="build project">
+		<mkdir dir="bin" />
+		<javac srcdir="src" destdir="bin" debug="true">
+			<classpath refid="compile.classpath" />
+		</javac>
+	</target>
+
+</project>
