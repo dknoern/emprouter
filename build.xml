@@ -6,19 +6,14 @@
 			<include name="**/*.jar" />
 		</fileset>
 	</path>
-
-
-
 	<target name="clean">
 		<delete quiet="true" dir="bin" />
 	</target>
-
-
 	<target name="build" description="build project">
 		<mkdir dir="bin" />
 		<javac srcdir="src" destdir="bin" debug="true">
 			<classpath refid="compile.classpath" />
 		</javac>
 	</target>
-
+	<target name="test" depends="build"/>
 </project>
