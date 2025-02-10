@@ -6,7 +6,6 @@ import java.math.BigInteger;
 
 public class ByteUtils {
 
-
 	public static long byteArrayToLong(byte[] b, int istart, int iend) {
 		long l = 0;
 
@@ -225,8 +224,6 @@ public class ByteUtils {
 		 bos.write(bytes, i, j-i);
 		 
 		 return bos.toString();
-
-
 	}
 
 	public static byte[] getSubSequence(byte[] bytes, int off, int len) {
@@ -236,7 +233,6 @@ public class ByteUtils {
 		 return bos.toByteArray();
 	}
 	
-
 	public static String getString(byte[] bytes, int off, int len) {
 		
 		 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -244,11 +240,6 @@ public class ByteUtils {
 		 return bos.toString();
 	}
 		
-	
-
-	
-	
-
 	public static byte[] getBytes (byte value) throws IOException {
 		byte[] byteArray = new byte[1];
 		byteArray[0] = value;
@@ -259,7 +250,6 @@ public class ByteUtils {
 		return getBytes((long)value,length);
 	}
 
-
 	public static byte[] getBytes(long value, int length) throws IOException {
 
 		byte[] b = new byte[length];
@@ -269,11 +259,4 @@ public class ByteUtils {
 		}
 		return b;
 	}
-
-	
-	
-	
-	
-
-
 }

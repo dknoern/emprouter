@@ -3,12 +3,15 @@ package com.seattleweb.emprouter;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmpRouterMessageReceiver extends MessageReceiver{
 
+	public static Logger logger = LoggerFactory.getLogger(EmpRouterMessageReceiver.class);
+
 	HashMap<String,ClassDConnection> classDMap;
 	HashMap<String,AMQPConnection> amqpMap;
-	
 	
 	public EmpRouterMessageReceiver(HashMap<String,ClassDConnection> classDMap,HashMap<String,AMQPConnection> amqpMap){
 		this.classDMap = classDMap;
@@ -16,39 +19,35 @@ public class EmpRouterMessageReceiver extends MessageReceiver{
 		
 	}
 	
-	
 	@Override
 	public void onMessage(byte[] data) {
 		
-		System.out.println("message received: \n" + ByteUtils.toHexDump(data));
-		
+		logger.info("message received: \n" + ByteUtils.toHexDump(data));
 		
 		EmpMessage empMessage = new EmpMessage(data);
 		
 		String destAddress = empMessage.getDestAddress();
 		
-		System.out.println("received message of type " + empMessage.getMessageTypeID() + " bound for "+ destAddress);
+		logger.info("received message of type " + empMessage.getMessageTypeID() + " bound for "+ destAddress);
 		
 		ClassDConnection conn = classDMap.get(destAddress);
 		
 		if(conn!=null){
 			try {
+				logger.info("found classD connection");
 				conn.send(data);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage());
 			}
 		}else{
+			logger.info("looking for AMQP connection");
 			AMQPConnection amqpConnection = amqpMap.get(destAddress);
 			if( amqpConnection !=null){
-				System.out.println("sending AMQP message to AMQP client at " + destAddress);
+				logger.info("sending AMQP message to AMQP client at " + destAddress);
 				amqpConnection.send(data);
 			}else{
-				System.out.println("can't find connection for address " + destAddress);
+				logger.error("can't find connection for address " + destAddress);
 			}
 		}
-
-		
 	}
-
 }

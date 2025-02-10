@@ -3,13 +3,13 @@ package com.seattleweb.emprouter;
 import java.util.HashMap;
 import java.util.Properties;
 
-import javax.jms.BytesMessage;
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.MessageConsumer;
-import javax.jms.MessageProducer;
-import javax.jms.Session;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.MessageProducer;
+import jakarta.jms.Session;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 
@@ -29,28 +29,28 @@ public class AMQPConnection extends Thread {
 	public AMQPConnection(String receiveQueue, String sendQueue) {
 
 		Properties prop = new Properties();
+
+		prop.setProperty("java.naming.factory.initial",
+				"org.apache.qpid.jms.jndi.JmsInitialContextFactory");
+
 		prop.setProperty("connectionfactory.qpidConnectionfactory",
-				"amqp://guest:guest@clientid/test?brokerlist='tcp://localhost:10002'");
+				"amqp://localhost:5672");
 
 		if (receiveQueue != null) {
-
-			prop.setProperty("destination.receiver", receiveQueue);
-			prop.setProperty("java.naming.factory.initial",
-					"org.apache.qpid.jndi.PropertiesFileInitialContextFactory");
-
+			prop.setProperty("queue.receiver", receiveQueue);
 		}
 
 		if (sendQueue != null) {
-			prop.setProperty("destination.sender", sendQueue);
-			prop.setProperty("java.naming.factory.initial",
-					"org.apache.qpid.jndi.PropertiesFileInitialContextFactory");
+			prop.setProperty("queue.sender", sendQueue);
 		}
-
+		
 		try {
 			Context context = new InitialContext(prop);
+
 			ConnectionFactory connectionFactory = (ConnectionFactory) context
 					.lookup("qpidConnectionfactory");
-			Connection connection = connectionFactory.createConnection();
+			Connection connection = connectionFactory.createConnection("admin","admin");
+
 			connection.start();
 
 			session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
@@ -58,7 +58,7 @@ public class AMQPConnection extends Thread {
 			if (receiveQueue != null) {
 				Destination destination = (Destination) context
 						.lookup("receiver");
-
+				
 				messageConsumer = session.createConsumer(destination);
 				start();
 			}

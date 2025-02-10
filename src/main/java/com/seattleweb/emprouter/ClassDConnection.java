@@ -6,12 +6,12 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClassDConnection extends Thread {
 
-	public static Logger logger = Logger.getLogger("ClassDConnection");
-
+	public static Logger logger = LoggerFactory.getLogger(ClassDConnection.class);
 	public static int MESSAGE_TYPE_DATA = 1;
 	public static int MESSAGE_TYPE_ACK = 2;
 	public static int MESSAGE_TYPE_NACK = 3;
@@ -152,13 +152,7 @@ public class ClassDConnection extends Thread {
 
 						if (messageType == MESSAGE_TYPE_DATA) {
 							this.acknowledge(commId);
-						}else if(messageType == MESSAGE_TYPE_ACK) {
-							//System.out.println("ACK received");
-						}else if(messageType == MESSAGE_TYPE_KEEP_ALIVE) {
-							//System.out.println("Keep alive received");
-							this.acknowledge(commId);
 						}
-
 					}
 				}
 
@@ -172,7 +166,6 @@ public class ClassDConnection extends Thread {
 				stop();
 			}
 		}
-
 	}
 
 	public void close() throws IOException {
@@ -182,7 +175,6 @@ public class ClassDConnection extends Thread {
 		
 	}
 
-	
 	private static void getBytes(OutputStream bos, long value,
 			int length) throws IOException {
 		byte[] b = new byte[length];
@@ -192,7 +184,6 @@ public class ClassDConnection extends Thread {
 		}
 		bos.write(b);
 	}
-	
 	
 	private static long getLong(final byte[] b) {
 		long value = 0;

@@ -5,17 +5,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
 
-import org.apache.log4j.BasicConfigurator;
-
-
-
 public class EmpClient {
 
 	public static void main(String args[]) throws IOException {
 
-		
-		BasicConfigurator.configure();
-		
 		if (args.length != 2)
 			usage();
 
@@ -66,21 +59,15 @@ public class EmpClient {
 				empMessage.setMessageTime(new Date());
 				empMessage.setMessageBody("Hello, EMP".getBytes());
 				
-				
 				if (port > 0) {
 					classDConnection.send(empMessage.toByteArray());
 				} else if (queue != null) {
 					amqpConnection.send(empMessage.toByteArray());
-				}											
-																
-				
-
+				}																							
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-
 		}
-
 	}
 
 	private static void usage() {

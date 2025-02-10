@@ -17,16 +17,13 @@ public class ClassDKeepAliveThread extends Thread{
 				Thread.sleep(delay);
 				conn.keepAlive();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 	}
 	public void setConnection(ClassDConnection conn2) {
 		conn = conn2;
-		
 	}
 }

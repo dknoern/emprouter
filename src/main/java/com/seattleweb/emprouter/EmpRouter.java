@@ -4,36 +4,26 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmpRouter {
 
-	public static Logger logger = Logger.getLogger("EMPRouter");
+	public static Logger logger = LoggerFactory.getLogger(EmpRouter.class);
 	public EmpRouter() throws IOException {
 
 		AppConfigReader appConfigReader = new AppConfigReader();
 
 		List<AppConfig> list = appConfigReader.read();
-		
-		QpidThread.createConfigFile(list);
+
+		QpidConfigurer.configure(list);
 		
 		HashMap<String,ClassDConnection> classDMap = new HashMap<String,ClassDConnection>();
 		HashMap<String, AMQPConnection> amqpMap = new HashMap<String,AMQPConnection>();
 
-		System.setProperty("QPID_HOME", ".");
-		System.setProperty("QPID_WORK", "tmp");
-		
-		System.setProperty("conf", "config");
-		logger.info("starting emprouter 0.1");
-		QpidThread qpidThread = new QpidThread();
-		//qpidThread.start();
-		qpidThread.run();
-		//logger.info("qpid server started");
-		logger.info("qpid server started");
-		
-		MessageReceiver receiver = new EmpRouterMessageReceiver(classDMap,amqpMap);
+		logger.info("Starting emprouter 0.1");
 
-		
+		MessageReceiver receiver = new EmpRouterMessageReceiver(classDMap,amqpMap);
 
 		for (AppConfig appConfig : list) {
 
@@ -41,7 +31,7 @@ public class EmpRouter {
 			if(appConfig.getAppType()==AppConfig.APP_TYPE_CLASSD){
 				appTypeString = "CLASSD";
 			}
-			logger.info("Initialzing application of type " + appTypeString + " for EMP address " + appConfig.getEmpAddress());
+			logger.info("Initialzing connection of type " + appTypeString + " for EMP address " + appConfig.getEmpAddress());
 			if(appConfig.getAppType() == AppConfig.APP_TYPE_CLASSD){
 
 					try {
@@ -71,20 +61,18 @@ public class EmpRouter {
 			try {
 				Thread.sleep(5000L);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-
 	}
 
 	public static void main(String[] args) {
+		
 		try {
-			EmpRouter agLight = new EmpRouter();
+			new EmpRouter();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			logger.error("unable to initialize emprouter",e);
+			logger.error("initialize failure: " + e.getMessage());
+			System.exit(1);
 		}
 	}
-
 }

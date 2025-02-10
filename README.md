@@ -12,14 +12,11 @@ or AMQP.
 
 Build Instructions:
 ------------------------------------
-To build, first install JDK 1.6 or later and Apache Ant 1.6 or later. To build the code type:
+To build, first install JDK 23 or later and Maven 3.9 or later. To build the code type:
 
 ```
-ant build
+mvn install
 ```
-
-(note: pom.xml does not work yet, neet to upgrade QPID to version 0.32)
-
 
 Configuration:
 -------------------------------------
@@ -33,13 +30,19 @@ EMP_ADDRESS,TYPE,QUEUE_NAME or PORT
 TYPE should be set to AMQP or CLASSD.  
 
 For AMQP, a QUEUE_NAME is required.  This will be the name of the queue from which the corresponding AMQP application
-will receive incoming messages.  AMPQ applications should always send message to the exchange "FromApp.Ex" using routing key "FromAppQueueToApp.Ex".
+will receive incoming messages.  AMPQ applications should always send message to the exchange "FromApp.Ex" using routing key "FromAppQueue".
 
 For CLASSD, a PORT value is required.  This is the port to and from which the ClassD application will send and receive
 messages.
 
 Running:
 -------------------------------------
+
+Start QPID using docker:
+
+```
+docker run -d -p 5672:5672 -p 8080:8080 --name qpid apache/qpid-broker-j
+```
 
 To start the EMPRouter, execute the script "emprouter.sh"
 

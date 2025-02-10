@@ -8,63 +8,60 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AppConfigReader {
 
-	public AppConfigReader(){
+	public static Logger logger = LoggerFactory.getLogger(AppConfigReader.class);
+
+	public AppConfigReader() {
 	}
-	
-	public List<AppConfig> read(){
-		
-		
+
+	public List<AppConfig> read() {
+
 		ArrayList<AppConfig> list = new ArrayList<AppConfig>();
 
 		String filename = "config/emprouter.cfg";
 
-	    try {
-	        BufferedReader input =  new BufferedReader(new FileReader(filename));
-	        try {
-	          String line = null; 
+		try {
+			BufferedReader input = new BufferedReader(new FileReader(filename));
+			try {
+				String line = null;
 
-	          while (( line = input.readLine()) != null){
-	        	  if(!line.startsWith("#")){
-	        		  AppConfig appConfig = new AppConfig();
-	        		  StringTokenizer st = new StringTokenizer(line,",");
-	        		  	
-	        		  appConfig.setEmpAddress(st.nextToken());
-	        		  
-	        		  String appTypeString = st.nextToken();
-	        		  if("AMQP".equals(appTypeString)){
-	        			  appConfig.setAppType(AppConfig.APP_TYPE_AMQP);
-        				  String queueName = st.nextToken();
-        				  appConfig.setQueueName(queueName);
+				while ((line = input.readLine()) != null) {
+					if (!line.startsWith("#")) {
+						AppConfig appConfig = new AppConfig();
+						StringTokenizer st = new StringTokenizer(line, ",");
 
-	        		  }else{
-	        			  appConfig.setAppType(AppConfig.APP_TYPE_CLASSD);
-        				  int port = Integer.parseInt(st.nextToken());
-        				  appConfig.setPort(port);
+						appConfig.setEmpAddress(st.nextToken());
 
-	        		  }
-	        		  
-	      			  	      			
-	      			  list.add(appConfig);
-	        	  }	           
-	          }
-	        }
-	        finally {
-	          input.close();
-	        }
-	      }catch (FileNotFoundException ex){
-		        System.out.println("Config file ["+filename+"] not found");
-		        System.exit(1);
-	      }catch (IOException ex){
-		        ex.printStackTrace();
-	      }
-	      
-	      return list;
+						String appTypeString = st.nextToken();
+						if ("AMQP".equals(appTypeString)) {
+							appConfig.setAppType(AppConfig.APP_TYPE_AMQP);
+							String queueName = st.nextToken();
+							appConfig.setQueueName(queueName);
 
+						} else {
+							appConfig.setAppType(AppConfig.APP_TYPE_CLASSD);
+							int port = Integer.parseInt(st.nextToken());
+							appConfig.setPort(port);
+
+						}
+
+						list.add(appConfig);
+					}
+				}
+			} finally {
+				input.close();
+			}
+		} catch (FileNotFoundException ex) {
+			logger.error("Config file [" + filename + "] not found");
+			System.exit(1);
+		} catch (IOException ex) {
+			logger.error(ex.getMessage());
+		}
+
+		return list;
 	}
-	
-	
-	
 }
